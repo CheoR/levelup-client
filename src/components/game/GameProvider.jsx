@@ -8,8 +8,24 @@ export const GameContext = createContext()
 
 export const GameProvider = ( props ) => {
  
+  const [ gameTypes, setTypes ] = useState([])
   const [ games, setGames ] = useState([])
- 
+
+  const createGame = ( game ) => {
+    console.log("nwe game properties")
+    console.table(game)
+    return fetch(`${URL}/games`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Token ${localStorage.getItem("lu_token")}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(game)
+    })
+    .then(getGames)
+  } // createGame
+
+
   const getGames = () => {
    return fetch(`${URL}/games`, {
     headers: {
@@ -21,10 +37,23 @@ export const GameProvider = ( props ) => {
   } // getGames
 
 
+  const getGameTypes = () => {
+    return fetch(`${URL}/gametypes`, {
+      headers: {
+        "Authorization": `Token ${localStorage.getItem("lu_token")}`
+      }
+    })
+    .then(response => response.json())
+    .then(response => setTypes(response))
+  }
+
  return (
   <GameContext.Provider value={{ 
    games,
-   getGames
+   gameTypes,
+   createGame,
+   getGames,
+   getGameTypes
   }}>
    { props.children }
   </GameContext.Provider>
