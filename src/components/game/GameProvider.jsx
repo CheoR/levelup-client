@@ -12,8 +12,7 @@ export const GameProvider = ( props ) => {
   const [ games, setGames ] = useState([])
 
   const createGame = ( game ) => {
-    console.log("nwe game properties")
-    console.table(game)
+
     return fetch(`${URL}/games`, {
       method: "POST",
       headers: {
