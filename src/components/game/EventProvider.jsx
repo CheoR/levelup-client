@@ -8,6 +8,24 @@ export const EventContext = createContext()
 export const EventProvider = ( props ) => {
  const [ events, setEvents ] = useState([])
 
+ const createEvent = ( event ) => {
+      console.log("nwe game properties")
+    console.table(event)
+ // "Content-Type": "application/json"
+
+  return fetch(`${URL}/events`, {
+   method: 'POST',
+   headers: {
+    "Authorization": `Token ${localStorage.getItem("lu_token")}`,
+    "Content-Type": "application/json"
+   },
+   body: JSON.stringify(event)
+  })
+  .then(getEvents)
+
+ } // createEvent
+
+
  const getEvents = () => {
   return fetch(`${URL}/events`, {
    headers: {
@@ -22,7 +40,8 @@ export const EventProvider = ( props ) => {
  return (
   <EventContext.Provider value={{
    events,
-   getEvents
+   getEvents,
+   createEvent
   }}>
    { props.children }
   </EventContext.Provider>
