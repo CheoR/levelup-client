@@ -16,7 +16,8 @@ export const EventProvider = ( props ) => {
   return fetch(`${URL}/events`, {
    method: 'POST',
    headers: {
-    "Authorization": `Token ${localStorage.getItem("lu_token")}`
+    "Authorization": `Token ${localStorage.getItem("lu_token")}`,
+    "Content-Type": "application/json"
    },
    body: JSON.stringify(event)
   })
