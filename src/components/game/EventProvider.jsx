@@ -45,7 +45,22 @@ export const EventProvider = ( props ) => {
      }
    })
     .then(response => response.json())
+    .then(getEvents)
  } // joinEvent
+
+
+ const leaveEvent = ( eventId ) => {
+   return fetch(`${URL}/events/${ eventId }/signup`, {
+     method: 'DELETE',
+     headers: {
+       'Authorization': `Token ${localStorage.getItem("lu_token")}`
+     }
+   })
+    // uncommenting this code results in error since the server-side
+    // is not expecting anything returned to it
+    // .then(response => response.json())
+    .then(getEvents)
+ } // leaveEvent
 
 
  return (
@@ -53,7 +68,8 @@ export const EventProvider = ( props ) => {
    events,
    getEvents,
    createEvent,
-   joinEvent
+   joinEvent,
+   leaveEvent
   }}>
    { props.children }
   </EventContext.Provider>
