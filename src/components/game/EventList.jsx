@@ -9,9 +9,7 @@ export const EventList = (props) => {
     useEffect(() => {
       getEvents()
     }, [])
-            console.log("events list")
-           console.table(events)
-           console.log("end")
+
     return (
         <article className="events">
          <header className="events__header">
