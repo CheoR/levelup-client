@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from "react"
 import { GameContext } from "./GameProvider"
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 
 export const GameForm = () => {
     const history = useHistory()
 
-    const { createGame, getGameTypes, gameTypes } = useContext(GameContext)
+    const { createGame, getGameTypes, gameTypes, editGame, getGameById } = useContext(GameContext)
+    const { gameId } = useParams()
 
     /*
         Since the input fields are bound to the values of
@@ -21,6 +22,7 @@ export const GameForm = () => {
         gameTypeId: 0
     })
 
+
     /*
         Get game types on initialization so that the <select>
         element presents game type choices to the user.
@@ -28,6 +30,22 @@ export const GameForm = () => {
     useEffect(() => {
         getGameTypes()
     }, [])
+
+    useEffect(() => {
+      if(gameId) {
+        getGameById(gameId).then(game => {
+          console.log("game is")
+          console.table(game)
+          setCurrentGame({
+            skillLevel: parseInt(game.skill_level),
+            numberOfPlayers: game.number_of_players,
+            title: game.title,
+            maker: game.maker,
+            gameTypeId: game.gametype
+          })
+        })
+      }
+    }, [gameId])
 
     /*
         REFACTOR CHALLENGE START
@@ -105,7 +123,7 @@ export const GameForm = () => {
               <div className="form-group">
                 <label htmlFor="skill_level">Skill Level: </label>
                 <input type="text" name="skill_level" required autoFocus className="form-control"
-                  value={currentGame.skill_level}
+                  value={currentGame.skillLevel}
                   onChange={changeGameSkillLevelState}
                 />
               </div>
@@ -128,24 +146,46 @@ export const GameForm = () => {
              : <div>Loading</div>
             }
 
-            <button type="submit"
-              onClick={evt => {
-                // Prevent form from being submitted
-                evt.preventDefault()
+            {
+              gameId
+              ? <button
+                onClick={evt => {
+                  evt.preventDefault()
 
-                const game = {
-                  maker: currentGame.maker,
-                  title: currentGame.title,
-                  numberOfPlayers: parseInt(currentGame.numberOfPlayers),
-                  skillLevel: parseInt(currentGame.skillLevel),
-                  gameTypeId: parseInt(currentGame.gameTypeId)
-                }
+                  const game = {
+                    id: parseInt(gameId),
+                    maker: currentGame.maker,
+                    title: currentGame.title,
+                    numberOfPlayers: parseInt(currentGame.numberOfPlayers),
+                    skillLevel: parseInt(currentGame.skillLevel),
+                    gameTypeId: parseInt(currentGame.gameTypeId)
+                  }
 
-             // Send POST request to your API
-             createGame(game)
-                 .then(() => history.push("/games"))
-            }}
-              className="btn btn-primary">Create</button>
+              // Send POST request to your API
+              editGame(game)
+                  .then(() => history.push("/"))
+              }}
+                className="btn btn-primary">Edit</button>
+
+              : <button type="submit"
+                onClick={evt => {
+                  // Prevent form from being submitted
+                  evt.preventDefault()
+
+                  const game = {
+                    maker: currentGame.maker,
+                    title: currentGame.title,
+                    numberOfPlayers: parseInt(currentGame.numberOfPlayers),
+                    skillLevel: parseInt(currentGame.skillLevel),
+                    gameTypeId: parseInt(currentGame.gameTypeId)
+                  }
+
+              // Send POST request to your API
+              createGame(game)
+                  .then(() => history.push("/"))
+              }}
+                className="btn btn-primary">Create</button>
+              }
         </form>
     )
 }
